@@ -37,7 +37,7 @@ def get_animal(animal_type):
 
 
 def get_human():
-    human = Human(int(CELL_NUMBER / 2), int(CELL_NUMBER / 2))
+    human = Human(int(CELL_NUMBER // 2), int(CELL_NUMBER // 2))
     return human
 
 
@@ -52,6 +52,8 @@ class World:
     def make_round(self):
         for o in self.existing_animals:
             o.action()
+        self.human.action()
+        print(f"pozycja człowieka: {self.human.x}, {self.human.y}")
 
     def draw_world(self, screen):
         for o in self.existing_animals:

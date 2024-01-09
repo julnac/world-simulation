@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from constants import *
-from Direction import Direction
 import pygame
 import random
 
@@ -12,6 +11,7 @@ class Organism(ABC):
         self.force = force
         self.initiative = initiative
         self.color = color
+        self.directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 
     @abstractmethod
     def action(self):
@@ -29,13 +29,14 @@ class Animal(Organism):
         super().__init__(x, y, force, initiative, color)
 
     def action(self):
-        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-        dx, dy = random.choice(directions)
+        super().action()
+        dx, dy = random.choice(self.directions)
         self.x += dx
         self.y += dy
 
         self.x = max(0, min(self.x, CELL_NUMBER - 1))
         self.y = max(0, min(self.y, CELL_NUMBER - 1))
+
 
 
 class Plant(Organism):

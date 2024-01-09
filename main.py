@@ -19,8 +19,17 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.KEYDOWN:
             screen.fill((0, 0, 0))
+
+            if event.key == pygame.K_UP:
+                world.human.y -= 1
+            if event.key == pygame.K_DOWN:
+                world.human.y += 1
+            if event.key == pygame.K_RIGHT:
+                world.human.x += 1
+            if event.key == pygame.K_LEFT:
+                world.human.x -= 1
             world.make_round()
             world.draw_world(screen)
 
