@@ -1,5 +1,8 @@
+import random
+
 import pygame
 import sys
+
 from constants import *
 from world import World
 
@@ -17,6 +20,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
+            screen.fill((0, 0, 0))
             world.make_round()
             world.draw_world(screen)
 
