@@ -7,3 +7,6 @@ class CyberSheep(Animal):
         self.force = 11
         self.initiative = 4
         super().__init__(x, y, self.force, self.initiative, self.color)
+
+    def __str__(self):
+        return "CyberSheep"

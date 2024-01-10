@@ -8,6 +8,9 @@ class Fox(Animal):
         self.initiative = 7
         super().__init__(x, y, self.force, self.initiative, self.color)
 
+    def __str__(self):
+        return "Fox"
+
     def action(self):
         super().action()
         # Good smell

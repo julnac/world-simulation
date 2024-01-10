@@ -37,11 +37,15 @@ class Animal(Organism):
         self.x = max(0, min(self.x, CELL_NUMBER - 1))
         self.y = max(0, min(self.y, CELL_NUMBER - 1))
 
+    # def collision(self):
+    #     super().collision()
+    #     print(f"Collision: {self} and {other_animal}")
+
 
 class Plant(Organism):
-    def __init__(self, force, initiative, x, y, color):
-        super().__init__(force, initiative, x, y, color)
-        initiative = 0
+    def __init__(self, x, y, force, color):
+        self.initiative = 0
+        super().__init__(x, y, force, self.initiative, color)
 
     def action(self):
         pass

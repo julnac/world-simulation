@@ -15,7 +15,6 @@ animal_type_list = ["wolf", "sheep", "fox", "turtle", "antelope", "cyber_sheep"]
 def choose_animal_type_randomly(animals, number):
     chosen_animal_types = []
     for animal in range(number):
-        # dodaj żeby gatunki się nie powtarzały
         chosen_animal_types.append(random.choice(animals))
     return chosen_animal_types
 
@@ -44,6 +43,10 @@ def get_human():
     return human
 
 
+def check_collision(animal1, animal2):
+    return animal1.x == animal2.x and animal1.y == animal2.y
+
+
 class World:
     def __init__(self):
         self.existing_animals = []
@@ -51,13 +54,20 @@ class World:
         for animal_type in chosen_animal_types:
             self.existing_animals.append(get_animal(animal_type))
         self.human = get_human()
-        print(self.existing_animals)
+        self.existing_animals.append(self.human)
+        self.existing_animals.sort(key=lambda x: x.initiative, reverse=True)
+        for a in self.existing_animals:
+            print(f"{a}, pos: {a.x}, {a.y} | ", end="")
 
     def make_round(self):
         for o in self.existing_animals:
             o.action()
-        self.human.action()
-        print(f"pozycja człowieka: {self.human.x}, {self.human.y}")
+            for other_animal in self.existing_animals:
+                if other_animal != o:
+                    if check_collision(o, other_animal):
+                        o.collision()
+                        print(f"Collision: {o} invades {other_animal} !")
+        # self.human.action()
 
     def draw_world(self, screen):
         for o in self.existing_animals:

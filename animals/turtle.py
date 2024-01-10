@@ -7,3 +7,6 @@ class Turtle(Animal):
         self.force = 2
         self.initiative = 1
         super().__init__(x, y, self.force, self.initiative, self.color)
+
+    def __str__(self):
+        return "Turtle"

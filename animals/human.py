@@ -10,6 +10,9 @@ class Human(Animal):
         self.initiative = 4
         super().__init__(x, y, self.force, self.initiative, self.color)
 
+    def __str__(self):
+        return "HUMAN"
+
     def action(self):
         self.x = max(0, min(self.x, CELL_NUMBER - 1))
         self.y = max(0, min(self.y, CELL_NUMBER - 1))
