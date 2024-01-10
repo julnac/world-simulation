@@ -38,7 +38,6 @@ class Animal(Organism):
         self.y = max(0, min(self.y, CELL_NUMBER - 1))
 
 
-
 class Plant(Organism):
     def __init__(self, force, initiative, x, y, color):
         super().__init__(force, initiative, x, y, color)

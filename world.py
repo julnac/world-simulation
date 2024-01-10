@@ -5,10 +5,11 @@ from animals.sheep import Sheep
 from animals.fox import Fox
 from animals.turtle import Turtle
 from animals.antelope import Antelope
+from animals.cyber_sheep import CyberSheep
 from animals.human import Human
 import pygame
 
-animal_type_list = ["wolf", "sheep", "fox", "turtle", "antelope"]
+animal_type_list = ["wolf", "sheep", "fox", "turtle", "antelope", "cyber_sheep"]
 
 
 def choose_animal_type_randomly(animals, number):
@@ -32,6 +33,8 @@ def get_animal(animal_type):
         return Antelope(x, y)
     elif animal_type == "antelope":
         return Fox(x, y)
+    elif animal_type == "cyber_sheep":
+        return CyberSheep(x, y)
     else:
         return None
 
@@ -44,10 +47,11 @@ def get_human():
 class World:
     def __init__(self):
         self.existing_animals = []
-        chosen_animal_types = choose_animal_type_randomly(animal_type_list, 5)
+        chosen_animal_types = choose_animal_type_randomly(animal_type_list, 7)
         for animal_type in chosen_animal_types:
             self.existing_animals.append(get_animal(animal_type))
         self.human = get_human()
+        print(self.existing_animals)
 
     def make_round(self):
         for o in self.existing_animals:
