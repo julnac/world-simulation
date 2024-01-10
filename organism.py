@@ -17,8 +17,12 @@ class Organism(ABC):
     def action(self):
         pass
 
-    def collision(self):
-        pass
+    def collision(self, other_organism):
+        print(f"{self} collides with {other_organism}")
+        if self.force < other_organism.force:
+            print(f"{other_organism} wins")
+        else:
+            print(f"{self} wins")
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, (self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
@@ -36,10 +40,6 @@ class Animal(Organism):
 
         self.x = max(0, min(self.x, CELL_NUMBER - 1))
         self.y = max(0, min(self.y, CELL_NUMBER - 1))
-
-    # def collision(self):
-    #     super().collision()
-    #     print(f"Collision: {self} and {other_animal}")
 
 
 class Plant(Organism):
