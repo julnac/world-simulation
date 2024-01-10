@@ -22,6 +22,7 @@ while running:
         if event.type == pygame.KEYDOWN:
             screen.fill((0, 0, 0))
 
+            # TODO - limit move to board size
             if event.key == pygame.K_UP:
                 world.human.y -= 1
             if event.key == pygame.K_DOWN:

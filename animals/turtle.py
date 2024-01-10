@@ -1,3 +1,4 @@
+from enums.species import Species
 from organism import Animal
 
 
@@ -6,7 +7,8 @@ class Turtle(Animal):
         self.color = (199, 198, 31)
         self.force = 2
         self.initiative = 1
-        super().__init__(x, y, self.force, self.initiative, self.color)
+        self.species = Species.Turtle
+        super().__init__(x, y, self.force, self.initiative, self.color, self.species)
 
     def __str__(self):
         return "Turtle"
