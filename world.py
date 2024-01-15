@@ -144,7 +144,8 @@ class World:
         update_ranking()
 
     @staticmethod
-    def make_round():
+    def make_round() -> str:
+        state = "game"
         for organism in existing_animals:
             next_position = generate_position("adjacent", existing_animals, organism)
             organism.action(next_position)
@@ -163,17 +164,26 @@ class World:
                                 print(f"{other_organism}({other_organism.id}) kills {organism}({organism.id})")
                                 if organism.color == (255, 0, 128):
                                     print("GAME OVER")
+                                    state = "game_over"
+                                    break
                                 existing_animals.remove(organism)
                             else:
                                 print(f"{organism}({organism.id}) kills {other_organism}({other_organism.id})")
                                 if other_organism.color == (255, 0, 128):
                                     print("GAME OVER")
+                                    state = "game_over"
+                                    break
                                 existing_animals.remove(other_organism)
                             update_ranking()
                         case "none":
                             pass
                         case _:
                             print("Error")
+
+            if state == "game_over":
+                return "game_over"
+
+            return state
 
     def draw_world(self, screen):
 
