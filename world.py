@@ -126,13 +126,13 @@ def check_collision(animal1, animal2):
 
 def update_ranking():
     existing_animals.sort(key=lambda x: (-x.initiative, -x.age))
-    for organism in existing_animals:
-        print(f"{organism}(id:{organism.id}), age: {organism.age} | ", end="")
+    # for organism in existing_animals:
+        # print(f"{organism}(id:{organism.id}), age: {organism.age} | ", end="")
 
 
 class World:
     def __init__(self):
-        initial_organisms_count = 20
+        initial_organisms_count = 10
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
             position = generate_position("random", existing_animals)
@@ -159,6 +159,16 @@ class World:
                             update_ranking()
                         case "fight":
                             organism.collision(other_organism)
+                            if organism.force < other_organism.force:
+                                print(f"{other_organism}({other_organism.id}) kills {organism}({organism.id})")
+                                if organism.color == (255, 0, 128):
+                                    print("GAME OVER")
+                                existing_animals.remove(organism)
+                            else:
+                                print(f"{organism}({organism.id}) kills {other_organism}({other_organism.id})")
+                                if other_organism.color == (255, 0, 128):
+                                    print("GAME OVER")
+                                existing_animals.remove(other_organism)
                             update_ranking()
                         case "none":
                             pass
@@ -185,7 +195,7 @@ class World:
         animal_counter = 1
 
         for organism in existing_animals:
-            text_surface = font.render(f"{animal_counter}. {organism}(id:{organism.id}), age: {organism.age}", True, (71, 71, 71))
+            text_surface = font.render(f"{animal_counter}. [{organism.id}]{organism}, {organism.age} years", True, (71, 71, 71))
             screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
             y_offset += 20
             animal_counter += 1

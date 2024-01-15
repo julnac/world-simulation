@@ -23,11 +23,12 @@ class Organism(ABC):
         pass
 
     def collision(self, other_organism):
-        print(f"{self} invades {other_organism}")
-        if self.force < other_organism.force:
-            print(f"{other_organism} wins")
-        else:
-            print(f"{self} wins")
+        # print(f"{self} invades {other_organism}")
+        # if self.force < other_organism.force:
+        #     print(f"{other_organism} wins")
+        # else:
+        #     print(f"{self} wins")
+        pass
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, (self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
