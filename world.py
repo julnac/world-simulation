@@ -15,7 +15,7 @@ import pygame
 from enums.species import Species
 from organism import Organism
 
-animal_type_list = ["Wolf"]
+# animal_type_list = ["Wolf"]
 # animal_type_list = ["Wolf", "Sheep", "Fox", "Turtle", "Antelope", "CyberSheep"]
 plant_type_list = ["Grass", "Milkweed", "Guarana", "WolfBerries", "Hogweed"]
 existing_animals = []
@@ -96,27 +96,27 @@ def generate_position(location_search_policy, existing_organisms, reference_orga
 
 def create_animal(species: Species, x, y) -> Organism:
     if species == Species.Wolf:
-        return Wolf(x, y)
+        return Wolf(x, y, 0)
     elif species == Species.Sheep:
-        return Sheep(x, y)
+        return Sheep(x, y, 0)
     elif species == Species.Fox:
-        return Fox(x, y)
+        return Fox(x, y, 0)
     elif species == Species.Turtle:
-        return Turtle(x, y)
+        return Turtle(x, y, 0)
     elif species == Species.Antelope:
-        return Antelope(x, y)
+        return Antelope(x, y, 0)
     elif species == Species.CyberSheep:
-        return CyberSheep(x, y)
+        return CyberSheep(x, y, 0)
 
 
 def get_human():
-    human = Human(int(CELL_NUMBER // 2), int(CELL_NUMBER // 2))
+    human = Human(int(CELL_NUMBER // 2), int(CELL_NUMBER // 2), 0)
     return human
 
 
 def check_collision(animal1, animal2):
     if animal2 != animal1 and animal1.x == animal2.x and animal1.y == animal2.y:
-        if animal1.color == animal2.color:
+        if animal1.color == animal2.color and animal1.age > 5 and animal2.age > 5:
             collision_type = "procreation"
         else:
             collision_type = "fight"
@@ -124,13 +124,16 @@ def check_collision(animal1, animal2):
     return "none"
 
 
-# def sexual_interaction(partner, existing_animal_list):
+def update_ranking():
+    existing_animals.sort(key=lambda x: (-x.initiative, -x.age))
+    for organism in existing_animals:
+        print(f"{organism}(id:{organism.id}), age: {organism.age} | ", end="")
 
 
 class World:
     def __init__(self):
-        INITIAL_ORGANISMS_COUNT = 30
-        chosen_animal_types = choose_animal_type_randomly(INITIAL_ORGANISMS_COUNT)
+        initial_organisms_count = 20
+        chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
             position = generate_position("random", existing_animals)
             animal = create_animal(animal_type, position[0], position[1])
@@ -138,34 +141,32 @@ class World:
                 existing_animals.append(animal)
         self.human = get_human()
         existing_animals.append(self.human)
-        existing_animals.sort(key=lambda x: x.initiative, reverse=True)
-        for a in existing_animals:
-            print(f"{a}, pos: {a.x}, {a.y} | ", end="")
+        update_ranking()
 
     @staticmethod
     def make_round():
         for organism in existing_animals:
             next_position = generate_position("adjacent", existing_animals, organism)
             organism.action(next_position)
+            organism.age = organism.age + 1
             for other_organism in existing_animals:
-                match check_collision(organism, other_organism):
-                    case "procreation":
-                        position = generate_position("empty-adjacent", existing_animals, organism)
-                        new_organism = create_animal(organism.species, position[0], position[1])
-
-                        existing_animals.append(new_organism)
-                        print(f"{organism} was born, parent ({organism.x}, {organism.y})")
-                        for a in existing_animals:
-                            print(f"{a}, pos: {a.x}, {a.y} | ", end="")
-                        # organism.collision(other_organism, procreation)
-                    case "fight":
-                        organism.collision(other_organism)
-                    case "none":
-                        pass
-                    case _:
-                        print("Error")
+                if other_organism != organism:
+                    match check_collision(organism, other_organism):
+                        case "procreation":
+                            position = generate_position("empty-adjacent", existing_animals, organism)
+                            new_organism = create_animal(organism.species, position[0], position[1])
+                            existing_animals.append(new_organism)
+                            update_ranking()
+                        case "fight":
+                            organism.collision(other_organism)
+                            update_ranking()
+                        case "none":
+                            pass
+                        case _:
+                            print("Error")
 
     def draw_world(self, screen):
+
         for o in existing_animals:
             o.draw(screen)
         self.human.draw(screen)
@@ -175,4 +176,17 @@ class World:
         for i in range(CELL_NUMBER):
             pygame.draw.line(screen, (71, 71, 71), (i * CELL_SIZE, 0), (i * CELL_SIZE, CELL_NUMBER * CELL_SIZE))
 
+        font = pygame.font.Font(None, 20)
+
+        pygame.draw.rect(screen, (225, 225, 225), pygame.Rect(GAME_WIDTH, 0, 200, GAME_HEIGHT))
+        header_surface = font.render("Ranking", True, (71, 71, 71))
+        screen.blit(header_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5))
+        y_offset = 30
+        animal_counter = 1
+
+        for organism in existing_animals:
+            text_surface = font.render(f"{animal_counter}. {organism}(id:{organism.id}), age: {organism.age}", True, (71, 71, 71))
+            screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
+            y_offset += 20
+            animal_counter += 1
 
