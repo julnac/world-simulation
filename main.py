@@ -7,7 +7,7 @@ from constants import *
 from world import World
 
 pygame.init()
-screen = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+screen = pygame.display.set_mode((GAME_WIDTH + 200, GAME_HEIGHT))
 pygame.display.set_caption("World simulation")
 running = True
 
@@ -22,15 +22,18 @@ while running:
         if event.type == pygame.KEYDOWN:
             screen.fill((0, 0, 0))
 
-            # TODO - limit move to board size
             if event.key == pygame.K_UP:
-                world.human.y -= 1
+                if world.human.y > 0:
+                    world.human.y -= 1
             if event.key == pygame.K_DOWN:
-                world.human.y += 1
+                if world.human.y < CELL_NUMBER - 1:
+                    world.human.y += 1
             if event.key == pygame.K_RIGHT:
-                world.human.x += 1
+                if world.human.x < CELL_NUMBER - 1:
+                    world.human.x += 1
             if event.key == pygame.K_LEFT:
-                world.human.x -= 1
+                if world.human.x > 0:
+                    world.human.x -= 1
             world.make_round()
             world.draw_world(screen)
 
