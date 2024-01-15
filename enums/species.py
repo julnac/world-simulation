@@ -8,4 +8,3 @@ class Species(Enum):
     Turtle = 'Turtle',
     Antelope = 'Antelope',
     CyberSheep = 'CyberSheep'
-    Human = 'Human'
