@@ -1,5 +1,5 @@
 import unittest
-from world import create_animal, generate_position
+from world import create_organism, generate_position
 
 
 class GeneratePositionTest(unittest.TestCase):
@@ -35,8 +35,8 @@ class GeneratePositionTest(unittest.TestCase):
         parent_initial_position_x = 6
         parent_initial_position_y = 5
 
-        wolf1 = create_animal("Wolf", existing_organism_initial_position_x, existing_organism_initial_position_y)
-        wolf2 = create_animal("Wolf", parent_initial_position_x, parent_initial_position_y)
+        wolf1 = create_organism("Wolf", existing_organism_initial_position_x, existing_organism_initial_position_y)
+        wolf2 = create_organism("Wolf", parent_initial_position_x, parent_initial_position_y)
         organisms = [wolf1, wolf2]
         location_search_policy = "adjacent"
 

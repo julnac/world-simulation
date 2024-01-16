@@ -54,9 +54,8 @@ class Animal(Organism):
 
 
 class Plant(Organism):
-    def __init__(self, x, y, age, force, color, species):
-        self.initiative = 0
-        super().__init__(x, y, age, force, self.initiative, color)
+    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
+        super().__init__(x, y, age, force, initiative, color, species)
 
     def action(self, vector):
         pass

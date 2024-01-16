@@ -10,17 +10,19 @@ from animals.turtle import Turtle
 from animals.antelope import Antelope
 from animals.cyber_sheep import CyberSheep
 from animals.human import Human
+from plants.grass import Grass
+from plants.wolf_berries import WolfBerries
+from plants.guarana import Guarana
+from plants.hogweed import Hogweed
+from plants.milkweed import Milkweed
 from organism import Organism
 import pygame
 
 from enums.species import Species
-from organism import Organism
 
-# animal_type_list = ["Wolf"]
 # animal_type_list = ["Wolf", "Sheep", "Fox", "Turtle", "Antelope", "CyberSheep"]
-plant_type_list = ["Grass", "Milkweed", "Guarana", "WolfBerries", "Hogweed"]
+# plant_type_list = ["Grass", "Milkweed", "Guarana", "WolfBerries", "Hogweed"]
 existing_animals = []
-# taken_positions = []
 
 
 def choose_animal_type_randomly(number):
@@ -95,7 +97,7 @@ def generate_position(location_search_policy, existing_organisms, reference_orga
     return None, None
 
 
-def create_animal(species: Species, x, y) -> Organism:
+def create_organism(species: Species, x, y) -> Organism:
     if species == Species.Wolf:
         return Wolf(x, y, 0)
     elif species == Species.Sheep:
@@ -108,6 +110,16 @@ def create_animal(species: Species, x, y) -> Organism:
         return Antelope(x, y, 0)
     elif species == Species.CyberSheep:
         return CyberSheep(x, y, 0)
+    elif species == Species.WolfBerries:
+        return WolfBerries(x, y, 0)
+    elif species == Species.Grass:
+        return Grass(x, y, 0)
+    elif species == Species.Milkweed:
+        return Milkweed(x, y, 0)
+    elif species == Species.Guarana:
+        return Guarana(x, y, 0)
+    elif species == Species.Hogweed:
+        return Hogweed(x, y, 0)
 
 
 def get_human():
@@ -148,7 +160,7 @@ class World:
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
             position = generate_position("random", existing_animals)
-            animal = create_animal(animal_type, position[0], position[1])
+            animal = create_organism(animal_type, position[0], position[1])
             if animal is not None:
                 existing_animals.append(animal)
         self.human = get_human()
@@ -167,7 +179,7 @@ class World:
                     match check_collision(organism, other_organism, self.round_counter):
                         case "procreation":
                             position = generate_position("empty-adjacent", existing_animals, organism)
-                            new_organism = create_animal(organism.species, position[0], position[1])
+                            new_organism = create_organism(organism.species, position[0], position[1])
                             existing_animals.append(new_organism)
                             update_ranking()
                         case "fight":
