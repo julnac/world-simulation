@@ -127,11 +127,13 @@ def check_collision(animal1, animal2):
 def update_ranking():
     existing_animals.sort(key=lambda x: (-x.initiative, -x.age))
     # for organism in existing_animals:
-        # print(f"{organism}(id:{organism.id}), age: {organism.age} | ", end="")
+    # print(f"{organism}(id:{organism.id}), age: {organism.age} | ", end="")
 
 
 class World:
     def __init__(self):
+        self.round_counter = 0
+        existing_animals.clear()
         initial_organisms_count = 10
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
@@ -149,7 +151,7 @@ class World:
         for organism in existing_animals:
             next_position = generate_position("adjacent", existing_animals, organism)
             organism.action(next_position)
-            organism.age = organism.age + 1
+            organism.age += 1
             for other_organism in existing_animals:
                 if other_organism != organism:
                     match check_collision(organism, other_organism):
@@ -182,10 +184,10 @@ class World:
 
             if state == "game_over":
                 return "game_over"
-
-            return state
+        return state
 
     def draw_world(self, screen):
+        self.round_counter += 1
 
         for o in existing_animals:
             o.draw(screen)
@@ -210,3 +212,5 @@ class World:
             y_offset += 20
             animal_counter += 1
 
+        turn_surface = font.render(f"Turn {self.round_counter}", True, (71, 71, 71))
+        screen.blit(turn_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 20 + y_offset))
