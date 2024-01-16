@@ -13,3 +13,4 @@ class Species(Enum):
     Guarana = 'Guarana'
     WolfBerries = 'WolfBerries'
     Hogweed = 'Hogweed'
+
