@@ -10,6 +10,7 @@ from animals.turtle import Turtle
 from animals.antelope import Antelope
 from animals.cyber_sheep import CyberSheep
 from animals.human import Human
+from organism import Organism
 import pygame
 
 from enums.species import Species
@@ -114,10 +115,18 @@ def get_human():
     return human
 
 
-def check_collision(animal1, animal2):
+def check_collision(animal1, animal2, round_counter):
     if animal2 != animal1 and animal1.x == animal2.x and animal1.y == animal2.y:
-        if animal1.color == animal2.color and animal1.age > 5 and animal2.age > 5:
-            collision_type = "procreation"
+        # TODO - nie rozpoznawaj gatunku po kolorze
+        if animal1.color == animal2.color:
+            if animal1.age > 5 and animal2.age > 5:
+                collision_type = "procreation"
+            elif (animal1.age > 5 > animal2.age) or (animal1.age < 5 < animal2.age):
+                collision_type = "none"
+            elif animal1.age < 5 < round_counter and animal2.age < 5:
+                collision_type = "fight"
+            else:
+                collision_type = "none"
         else:
             collision_type = "fight"
         return collision_type
@@ -132,6 +141,7 @@ def update_ranking():
 
 class World:
     def __init__(self):
+        Organism.id_counter = 1
         self.round_counter = 0
         existing_animals.clear()
         initial_organisms_count = 10
@@ -145,16 +155,16 @@ class World:
         existing_animals.append(self.human)
         update_ranking()
 
-    @staticmethod
-    def make_round() -> str:
+    def make_round(self) -> str:
         state = "game"
         for organism in existing_animals:
+            # TODO - niektórym organizmom czasem nie dolicza wieku
+            organism.age += 1
             next_position = generate_position("adjacent", existing_animals, organism)
             organism.action(next_position)
-            organism.age += 1
             for other_organism in existing_animals:
                 if other_organism != organism:
-                    match check_collision(organism, other_organism):
+                    match check_collision(organism, other_organism, self.round_counter):
                         case "procreation":
                             position = generate_position("empty-adjacent", existing_animals, organism)
                             new_organism = create_animal(organism.species, position[0], position[1])
@@ -198,7 +208,7 @@ class World:
         for i in range(CELL_NUMBER):
             pygame.draw.line(screen, (71, 71, 71), (i * CELL_SIZE, 0), (i * CELL_SIZE, CELL_NUMBER * CELL_SIZE))
 
-        font = pygame.font.Font(None, 20)
+        font = pygame.font.SysFont('arial', 15)
 
         pygame.draw.rect(screen, (225, 225, 225), pygame.Rect(GAME_WIDTH, 0, 200, GAME_HEIGHT))
         header_surface = font.render("Ranking", True, (71, 71, 71))
@@ -207,7 +217,7 @@ class World:
         animal_counter = 1
 
         for organism in existing_animals:
-            text_surface = font.render(f"{animal_counter}. [{organism.id}]{organism}, {organism.age} years", True, (71, 71, 71))
+            text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}", True, (71, 71, 71))
             screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
             y_offset += 20
             animal_counter += 1

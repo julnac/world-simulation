@@ -33,7 +33,7 @@ class Organism(ABC):
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, (self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.SysFont('arial', 36)
         text_surface = font.render(str(self.id), True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=(self.x * CELL_SIZE + CELL_SIZE // 2,
                                                   self.y * CELL_SIZE + CELL_SIZE // 2))
