@@ -22,7 +22,7 @@ from enums.species import Species
 
 # animal_type_list = ["Wolf", "Sheep", "Fox", "Turtle", "Antelope", "CyberSheep"]
 # plant_type_list = ["Grass", "Milkweed", "Guarana", "WolfBerries", "Hogweed"]
-existing_animals = []
+existing_organisms = []
 
 
 def choose_animal_type_randomly(number):
@@ -64,6 +64,7 @@ def find_adjacent_position(reference_organism):
 
 
 def find_empty_adjacent_position(board, reference_organism):
+    generate_try_counter = 0
     directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
     # find position further if everything is full?
     while True:
@@ -75,6 +76,21 @@ def find_empty_adjacent_position(board, reference_organism):
 
         if not board[x][y]:
             return x, y
+        else:
+            generate_try_counter += 1
+            if generate_try_counter > 10:
+                print("Exceeded 10 tries.")
+                return None
+
+
+def check_if_empty_adjacent_to_grow(board, reference_organism):
+    possible_positions = []
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    for dx, dy in directions:
+        x, y = (reference_organism.x + dx), (reference_organism.y + dy)
+        if x >= 0 and x < CELL_NUMBER and y >= 0 and y < CELL_NUMBER and not board[x][y]:
+            possible_positions.append((x, y))
+    return possible_positions
 
 
 def generate_position(location_search_policy, existing_organisms, reference_organism=None):
@@ -146,59 +162,81 @@ def check_collision(animal1, animal2, round_counter):
 
 
 def update_ranking():
-    existing_animals.sort(key=lambda x: (-x.initiative, -x.age))
+    existing_organisms.sort(key=lambda x: (-x.initiative, -x.age))
     # for organism in existing_animals:
     # print(f"{organism}(id:{organism.id}), age: {organism.age} | ", end="")
+
+
+def move(organism):
+    # TODO - niektórym organizmom czasem nie dolicza wieku
+    organism.age += 1
+    next_position = generate_position("adjacent", existing_organisms, organism)
+    action_type = organism.action(next_position)
+    if action_type == "grow":
+        grow_position = generate_position("empty-adjacent", existing_organisms, organism)
+        if grow_position is not None:
+            new_plant = create_organism(organism.species, grow_position[0], grow_position[1])
+            existing_organisms.append(new_plant)
+            print(f'{organism}({organism.id}) grows')
+            # update_ranking()
+
+
+def procreate(organism):
+    position = generate_position("empty-adjacent", existing_organisms, organism)
+    new_organism = create_organism(organism.species, position[0], position[1])
+    existing_organisms.append(new_organism)
+    update_ranking()
+
+
+def fight(organism, other_organism):
+    organism.collision(other_organism)
+
+    if organism.force < other_organism.force:
+        print(f"{other_organism}({other_organism.id}) kills {organism}({organism.id})")
+        if organism.color == (255, 0, 128):
+            print("GAME OVER")
+            return "game_over"
+        existing_organisms.remove(organism)
+    else:
+        print(f"{organism}({organism.id}) kills {other_organism}({other_organism.id})")
+        if other_organism.color == (255, 0, 128):
+            print("GAME OVER")
+            return "game_over"
+        existing_organisms.remove(other_organism)
+    update_ranking()
+    return "game"
 
 
 class World:
     def __init__(self):
         Organism.id_counter = 1
         self.round_counter = 0
-        existing_animals.clear()
+        existing_organisms.clear()
         initial_organisms_count = 10
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
-            position = generate_position("random", existing_animals)
+            position = generate_position("random", existing_organisms)
             animal = create_organism(animal_type, position[0], position[1])
             if animal is not None:
-                existing_animals.append(animal)
+                existing_organisms.append(animal)
         self.human = get_human()
-        existing_animals.append(self.human)
+        existing_organisms.append(self.human)
         update_ranking()
 
     def make_round(self) -> str:
+        print(f'#---Round {self.round_counter}---#')
         state = "game"
-        for organism in existing_animals:
-            # TODO - niektórym organizmom czasem nie dolicza wieku
-            organism.age += 1
-            next_position = generate_position("adjacent", existing_animals, organism)
-            organism.action(next_position)
-            for other_organism in existing_animals:
+        for organism in existing_organisms:
+            move(organism)
+            for other_organism in existing_organisms:
                 if other_organism != organism:
                     match check_collision(organism, other_organism, self.round_counter):
                         case "procreation":
-                            position = generate_position("empty-adjacent", existing_animals, organism)
-                            new_organism = create_organism(organism.species, position[0], position[1])
-                            existing_animals.append(new_organism)
-                            update_ranking()
+                            procreate(organism)
                         case "fight":
-                            organism.collision(other_organism)
-                            if organism.force < other_organism.force:
-                                print(f"{other_organism}({other_organism.id}) kills {organism}({organism.id})")
-                                if organism.color == (255, 0, 128):
-                                    print("GAME OVER")
-                                    state = "game_over"
-                                    break
-                                existing_animals.remove(organism)
-                            else:
-                                print(f"{organism}({organism.id}) kills {other_organism}({other_organism.id})")
-                                if other_organism.color == (255, 0, 128):
-                                    print("GAME OVER")
-                                    state = "game_over"
-                                    break
-                                existing_animals.remove(other_organism)
-                            update_ranking()
+                            state = fight(organism, other_organism)
+                            if state == "game_over":
+                                break
                         case "none":
                             pass
                         case _:
@@ -211,7 +249,7 @@ class World:
     def draw_world(self, screen):
         self.round_counter += 1
 
-        for o in existing_animals:
+        for o in existing_organisms:
             o.draw(screen)
         self.human.draw(screen)
 
@@ -228,7 +266,7 @@ class World:
         y_offset = 30
         animal_counter = 1
 
-        for organism in existing_animals:
+        for organism in existing_organisms:
             text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}", True, (71, 71, 71))
             screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
             y_offset += 20

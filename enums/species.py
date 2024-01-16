@@ -8,6 +8,7 @@ class Species(Enum):
     Turtle = 'Turtle',
     Antelope = 'Antelope',
     CyberSheep = 'CyberSheep'
+
     Grass = 'Grass'
     Milkweed = 'Milkweed'
     Guarana = 'Guarana'

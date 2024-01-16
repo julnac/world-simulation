@@ -23,11 +23,6 @@ class Organism(ABC):
         pass
 
     def collision(self, other_organism):
-        # print(f"{self} invades {other_organism}")
-        # if self.force < other_organism.force:
-        #     print(f"{other_organism} wins")
-        # else:
-        #     print(f"{self} wins")
         pass
 
     def draw(self, screen):
@@ -48,14 +43,16 @@ class Animal(Organism):
         x, y = next_position
         self.x = x
         self.y = y
-        # dx, dy = random.choice(self.directions)
-        # self.x = max(0, min(self.x, CELL_NUMBER - 1))
-        # self.y = max(0, min(self.y, CELL_NUMBER - 1))
+        return "none"
 
 
 class Plant(Organism):
     def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
         super().__init__(x, y, age, force, initiative, color, species)
 
-    def action(self, vector):
-        pass
+    def action(self, next_position):
+        if random.random() < 0.1:
+            return "grow"
+        else:
+            return "none"
+
