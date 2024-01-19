@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from constants import *
 import pygame
 import random
+from enums.species import Species
 
 
 class Organism(ABC):
@@ -19,7 +20,7 @@ class Organism(ABC):
         Organism.id_counter += 1
 
     @abstractmethod
-    def action(self, next_position, existing_organisms):
+    def action(self, next_position, existing_organisms=None):
         pass
 
     def collision(self, other_organism):
@@ -38,22 +39,29 @@ class Organism(ABC):
 class Animal(Organism):
     def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
         super().__init__(x, y, age, force, initiative, color, species)
+        self.previous_position = (0, 0)
 
-    def action(self, next_position, existing_organisms):
+    def action(self, next_position, existing_organisms=None):
         self.move(next_position)
 
     def move(self, next_position):
+        self.previous_position = (self.x, self.y)  # TODO: check if works
+
         x, y = next_position
         self.x = x
         self.y = y
+
         return "none"
+
+    def step_back(self):
+        self.move(self.previous_position)
 
 
 class Plant(Organism):
     def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
         super().__init__(x, y, age, force, initiative, color, species)
 
-    def action(self, next_position, existing_organisms):
+    def action(self, next_position, existing_organisms=None):
         if random.random() < 0.1:
             return "grow"
         else:

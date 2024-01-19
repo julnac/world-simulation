@@ -13,7 +13,7 @@ class Fox(Animal):
     def __str__(self):
         return "Fox"
 
-    def action(self, next_position, existing_organisms):
+    def action(self, next_position, existing_organisms=None):
         directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
         possible_locations = []
         for direction in directions:

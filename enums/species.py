@@ -6,12 +6,12 @@ class Species(Enum):
     Sheep = 'Sheep',
     Fox = 'Fox',
     Turtle = 'Turtle',
-    Antelope = 'Antelope',
-    CyberSheep = 'CyberSheep'
-
-    Grass = 'Grass'
-    Milkweed = 'Milkweed'
-    Guarana = 'Guarana'
-    WolfBerries = 'WolfBerries'
-    Hogweed = 'Hogweed'
+    # Antelope = 'Antelope',
+    # CyberSheep = 'CyberSheep'
+    #
+    # Grass = 'Grass'
+    # Milkweed = 'Milkweed'
+    # Guarana = 'Guarana'
+    # WolfBerries = 'WolfBerries'
+    # Hogweed = 'Hogweed'
 

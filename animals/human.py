@@ -13,6 +13,6 @@ class Human(Animal):
     def __str__(self):
         return "HUMAN"
 
-    def action(self, next_position, existing_organisms):
+    def action(self, next_position, existing_organisms=None):
         self.x = max(0, min(self.x, CELL_NUMBER - 1))
         self.y = max(0, min(self.y, CELL_NUMBER - 1))

@@ -1,3 +1,5 @@
+import random
+
 from enums.species import Species
 from organism import Animal
 
@@ -12,3 +14,9 @@ class Turtle(Animal):
 
     def __str__(self):
         return "Turtle"
+
+    def action(self, next_position, existing_organisms=None):
+        if random.random() < 0.75:
+            pass
+        else:
+            super().move(next_position)

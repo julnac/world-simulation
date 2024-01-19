@@ -146,7 +146,7 @@ def get_human():
 def check_collision(animal1, animal2, round_counter):
     if animal2 != animal1 and animal1.x == animal2.x and animal1.y == animal2.y:
         # TODO - nie rozpoznawaj gatunku po kolorze
-        if animal1.color == animal2.color:
+        if animal1.species == animal2.species:
             if animal1.age > 5 and animal2.age > 5:
                 collision_type = "procreation"
             elif (animal1.age > 5 > animal2.age) or (animal1.age < 5 < animal2.age):
@@ -156,7 +156,10 @@ def check_collision(animal1, animal2, round_counter):
             else:
                 collision_type = "none"
         else:
-            collision_type = "fight"
+            if animal2.species == Species.Turtle and animal1.force < 5:
+                collision_type = "special_turtle_defense"
+            else:
+                collision_type = "fight"
         return collision_type
     return "none"
 
@@ -194,6 +197,7 @@ def fight(organism, other_organism):
 
     if organism.force < other_organism.force:
         print(f"{other_organism}({other_organism.id}) kills {organism}({organism.id})")
+        # TODO - napraw ten kolor
         if organism.color == (255, 0, 128):
             print("GAME OVER")
             return "game_over"
@@ -213,7 +217,7 @@ class World:
         Organism.id_counter = 1
         self.round_counter = 0
         existing_organisms.clear()
-        initial_organisms_count = 50
+        initial_organisms_count = 15
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
             position = generate_position("random", existing_organisms)
@@ -240,6 +244,9 @@ class World:
                                 break
                         case "none":
                             pass
+                        case "special_turtle_defense":
+                            organism.step_back()
+                            print(f'{organism}({organism.id}) steps back from {other_organism}({other_organism.id})')
                         case _:
                             print("Error")
 
