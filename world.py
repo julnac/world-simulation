@@ -51,7 +51,10 @@ def generate_initial_position(board):
 
 
 def find_adjacent_position(reference_organism):
-    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    if reference_organism.species == Species.Antelope:
+        directions = [(0, -2), (0, 2), (-2, 0), (2, 0)]
+    else:
+        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
 
     while True:
         dx, dy = random.choice(directions)
@@ -158,6 +161,11 @@ def check_collision(animal1, animal2, round_counter):
         else:
             if animal2.species == Species.Turtle and animal1.force < 5:
                 collision_type = "special_turtle_defense"
+            elif animal2.species == Species.Antelope:
+                if random.random() < 0.5:
+                    collision_type = "special_antelope_escape"
+                else:
+                    collision_type = "fight"
             else:
                 collision_type = "fight"
         return collision_type
@@ -247,6 +255,9 @@ class World:
                         case "special_turtle_defense":
                             organism.step_back()
                             print(f'{organism}({organism.id}) steps back from {other_organism}({other_organism.id})')
+                        case "special_antelope_escape":
+                            move(other_organism, existing_organisms)
+                            print(f'{other_organism}({other_organism.id}) escapes from {organism}({organism.id})')
                         case _:
                             print("Error")
 

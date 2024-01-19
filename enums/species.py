@@ -6,7 +6,7 @@ class Species(Enum):
     Sheep = 'Sheep',
     Fox = 'Fox',
     Turtle = 'Turtle',
-    # Antelope = 'Antelope',
+    Antelope = 'Antelope',
     # CyberSheep = 'CyberSheep'
     #
     # Grass = 'Grass'

@@ -13,10 +13,6 @@ class Antelope(Animal):
     def __str__(self):
         return "Antelope"
 
-    def action(self, next_position, existing_organisms):
+    def action(self, next_position, existing_organisms=None):
         super().action(next_position, existing_organisms)
-        # x, y = next_position
-        # self.x = (x * 2)
-        # self.y = (y * 2)
-        # return "none"
         pass
