@@ -12,3 +12,8 @@ class Milkweed(Plant):
 
     def __str__(self):
         return "Milkweed"
+
+    # def action(self, next_position):
+    #     super().action(next_position)
+    #     for _ in range(0, 3):
+    #         Milkweed.action(self, next_position)

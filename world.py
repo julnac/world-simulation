@@ -79,18 +79,18 @@ def find_empty_adjacent_position(board, reference_organism):
         else:
             generate_try_counter += 1
             if generate_try_counter > 10:
-                print("Exceeded 10 tries.")
+                # print("Exceeded 10 tries.")
                 return None
 
 
-def check_if_empty_adjacent_to_grow(board, reference_organism):
-    possible_positions = []
-    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-    for dx, dy in directions:
-        x, y = (reference_organism.x + dx), (reference_organism.y + dy)
-        if x >= 0 and x < CELL_NUMBER and y >= 0 and y < CELL_NUMBER and not board[x][y]:
-            possible_positions.append((x, y))
-    return possible_positions
+# def check_if_empty_adjacent_to_grow(board, reference_organism):
+#     possible_positions = []
+#     directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+#     for dx, dy in directions:
+#         x, y = (reference_organism.x + dx), (reference_organism.y + dy)
+#         if x >= 0 and x < CELL_NUMBER and y >= 0 and y < CELL_NUMBER and not board[x][y]:
+#             possible_positions.append((x, y))
+#     return possible_positions
 
 
 def generate_position(location_search_policy, existing_organisms, reference_organism=None):
@@ -167,12 +167,12 @@ def update_ranking():
     # print(f"{organism}(id:{organism.id}), age: {organism.age} | ", end="")
 
 
-def move(organism):
+def move(organism, existing_organisms):
     # TODO - niektórym organizmom czasem nie dolicza wieku
     organism.age += 1
     next_position = generate_position("adjacent", existing_organisms, organism)
-    action_type = organism.action(next_position)
-    if action_type == "grow":
+    action_type = organism.action(next_position, existing_organisms)
+    if action_type == "grow" and organism.age > 2:
         grow_position = generate_position("empty-adjacent", existing_organisms, organism)
         if grow_position is not None:
             new_plant = create_organism(organism.species, grow_position[0], grow_position[1])
@@ -183,9 +183,10 @@ def move(organism):
 
 def procreate(organism):
     position = generate_position("empty-adjacent", existing_organisms, organism)
-    new_organism = create_organism(organism.species, position[0], position[1])
-    existing_organisms.append(new_organism)
-    update_ranking()
+    if position is not None:
+        new_organism = create_organism(organism.species, position[0], position[1])
+        existing_organisms.append(new_organism)
+        update_ranking()
 
 
 def fight(organism, other_organism):
@@ -212,7 +213,7 @@ class World:
         Organism.id_counter = 1
         self.round_counter = 0
         existing_organisms.clear()
-        initial_organisms_count = 10
+        initial_organisms_count = 50
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
             position = generate_position("random", existing_organisms)
@@ -227,7 +228,7 @@ class World:
         print(f'#---Round {self.round_counter}---#')
         state = "game"
         for organism in existing_organisms:
-            move(organism)
+            move(organism, existing_organisms)
             for other_organism in existing_organisms:
                 if other_organism != organism:
                     match check_collision(organism, other_organism, self.round_counter):
@@ -259,12 +260,15 @@ class World:
             pygame.draw.line(screen, (71, 71, 71), (i * CELL_SIZE, 0), (i * CELL_SIZE, CELL_NUMBER * CELL_SIZE))
 
         font = pygame.font.SysFont('arial', 15)
+        font_bold = pygame.font.SysFont('arial', 15, pygame.font.Font.bold)
 
         pygame.draw.rect(screen, (225, 225, 225), pygame.Rect(GAME_WIDTH, 0, 200, GAME_HEIGHT))
-        header_surface = font.render("Ranking", True, (71, 71, 71))
-        screen.blit(header_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5))
-        y_offset = 30
+        turn_surface = font_bold.render(f"Turn {self.round_counter}", True, (71, 71, 71))
+        screen.blit(turn_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5))
+        header_surface = font.render("Ranking:", True, (71, 71, 71))
+        screen.blit(header_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 30))
         animal_counter = 1
+        y_offset = 50
 
         for organism in existing_organisms:
             text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}", True, (71, 71, 71))
@@ -272,5 +276,4 @@ class World:
             y_offset += 20
             animal_counter += 1
 
-        turn_surface = font.render(f"Turn {self.round_counter}", True, (71, 71, 71))
-        screen.blit(turn_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 20 + y_offset))
+

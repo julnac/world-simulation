@@ -13,6 +13,22 @@ class Fox(Animal):
     def __str__(self):
         return "Fox"
 
-    def action(self, vector):
-        super().action(vector)
-        # Good smell
+    def action(self, next_position, existing_organisms):
+        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+        possible_locations = []
+        for direction in directions:
+            x, y = direction[0] + self.x, direction[1] + self.y
+            possible_locations.append((x, y))
+        for location in possible_locations:
+            for organism in existing_organisms:
+                if location[0] == organism.x and location[1] == organism.y and organism.force > self.force:
+                    possible_locations.remove(location)
+                    print(f"Fox({self.id}) avoids {organism}({organism.id})")
+
+        for pos in possible_locations:
+            if pos == next_position:
+                super().move(next_position)
+            else:
+                pass
+
+

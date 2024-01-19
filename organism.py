@@ -19,7 +19,7 @@ class Organism(ABC):
         Organism.id_counter += 1
 
     @abstractmethod
-    def action(self, vector):
+    def action(self, next_position, existing_organisms):
         pass
 
     def collision(self, other_organism):
@@ -28,7 +28,7 @@ class Organism(ABC):
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, (self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
-        font = pygame.font.SysFont('arial', 36)
+        font = pygame.font.SysFont('arial', 20)
         text_surface = font.render(str(self.id), True, (0, 0, 0))
         text_rect = text_surface.get_rect(center=(self.x * CELL_SIZE + CELL_SIZE // 2,
                                                   self.y * CELL_SIZE + CELL_SIZE // 2))
@@ -39,7 +39,10 @@ class Animal(Organism):
     def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
         super().__init__(x, y, age, force, initiative, color, species)
 
-    def action(self, next_position):
+    def action(self, next_position, existing_organisms):
+        self.move(next_position)
+
+    def move(self, next_position):
         x, y = next_position
         self.x = x
         self.y = y
@@ -50,7 +53,7 @@ class Plant(Organism):
     def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
         super().__init__(x, y, age, force, initiative, color, species)
 
-    def action(self, next_position):
+    def action(self, next_position, existing_organisms):
         if random.random() < 0.1:
             return "grow"
         else:
