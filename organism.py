@@ -5,47 +5,54 @@ import random
 
 
 class Organism(ABC):
-    def __init__(self, x, y, force=None, initiative=None, color=None):
+    id_counter = 1
+
+    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
         self.x = x
         self.y = y
         self.force = force
         self.initiative = initiative
         self.color = color
-        self.directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+        self.species = species
+        self.age = age
+        self.id = Organism.id_counter
+        Organism.id_counter += 1
 
     @abstractmethod
-    def action(self):
+    def action(self, vector):
         pass
 
     def collision(self, other_organism):
-        print(f"{self} collides with {other_organism}")
-        if self.force < other_organism.force:
-            print(f"{other_organism} wins")
-        else:
-            print(f"{self} wins")
+        pass
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, (self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
+        font = pygame.font.SysFont('arial', 36)
+        text_surface = font.render(str(self.id), True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=(self.x * CELL_SIZE + CELL_SIZE // 2,
+                                                  self.y * CELL_SIZE + CELL_SIZE // 2))
+        screen.blit(text_surface, text_rect)
+
 
 class Animal(Organism):
-    def __init__(self, x, y, force=None, initiative=None, color=None):
-        super().__init__(x, y, force, initiative, color)
+    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
+        super().__init__(x, y, age, force, initiative, color, species)
 
-    def action(self):
-        super().action()
-        dx, dy = random.choice(self.directions)
-        self.x += dx
-        self.y += dy
-
-        self.x = max(0, min(self.x, CELL_NUMBER - 1))
-        self.y = max(0, min(self.y, CELL_NUMBER - 1))
+    def action(self, next_position):
+        x, y = next_position
+        self.x = x
+        self.y = y
+        return "none"
 
 
 class Plant(Organism):
-    def __init__(self, x, y, force, color):
-        self.initiative = 0
-        super().__init__(x, y, force, self.initiative, color)
+    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
+        super().__init__(x, y, age, force, initiative, color, species)
 
-    def action(self):
-        pass
+    def action(self, next_position):
+        if random.random() < 0.1:
+            return "grow"
+        else:
+            return "none"
+
