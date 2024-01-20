@@ -1,5 +1,6 @@
 from enums.species import Species
 from organism import Plant
+import random
 
 
 class Milkweed(Plant):
@@ -14,7 +15,10 @@ class Milkweed(Plant):
     def __str__(self):
         return "Milkweed"
 
-    # def action(self, next_position):
-    #     super().action(next_position)
-    #     for _ in range(0, 3):
-    #         Milkweed.action(self, next_position)
+    def action(self, next_position, existing_organisms=None):
+        if random.random() < 0.3:
+            return "grow"
+        else:
+            return "none"
+
+
