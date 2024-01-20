@@ -228,7 +228,7 @@ class World:
         Organism.id_counter = 1
         self.round_counter = 0
         existing_organisms.clear()
-        initial_organisms_count = 15
+        initial_organisms_count = 30
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
             position = generate_position("random", existing_organisms)
@@ -292,7 +292,7 @@ class World:
         y_offset = 50
 
         for organism in existing_organisms:
-            text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}", True, (71, 71, 71))
+            text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}, force:{organism.force}", True, (71, 71, 71))
             screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
             y_offset += 20
             animal_counter += 1

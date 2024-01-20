@@ -100,6 +100,8 @@ while running:
                 if keys[pygame.K_LEFT]:
                     if world.human.x > 0:
                         world.human.x -= 1
+                if keys[pygame.K_e]:
+                    world.human.magic_elixir()
                 game_state = world.make_round()
                 world.draw_world(screen)
 
