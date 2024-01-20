@@ -212,6 +212,9 @@ def fight(organism, other_organism):
         existing_organisms.remove(organism)
     else:
         print(f"{organism}({organism.id}) kills {other_organism}({other_organism.id})")
+        if other_organism.species == Species.Guarana:
+            organism.force += 3
+            print(f"{organism}({organism.id}) gains +3 to force")
         if other_organism.color == (255, 0, 128):
             print("GAME OVER")
             return "game_over"
