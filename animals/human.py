@@ -6,9 +6,10 @@ from constants import *
 class Human(Animal):
     def __init__(self, x, y, age):
         self.color = (255, 0, 128)
+        self.image = 'human.png'
         self.force = 5
         self.initiative = 4
-        super().__init__(x, y, age, self.force, self.initiative, self.color)
+        super().__init__(x, y, age, self.force, self.initiative, color=self.color, image=self.image)
 
     def __str__(self):
         return "HUMAN"

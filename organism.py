@@ -8,12 +8,13 @@ from enums.species import Species
 class Organism(ABC):
     id_counter = 1
 
-    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
+    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None, image=None):
         self.x = x
         self.y = y
         self.force = force
         self.initiative = initiative
         self.color = color
+        self.image = image
         self.species = species
         self.age = age
         self.id = Organism.id_counter
@@ -27,7 +28,9 @@ class Organism(ABC):
         pass
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, (self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        # pygame.draw.rect(screen, self.color, (self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        image = pygame.image.load(f'assets/{self.image}')
+        screen.blit(image, (self.x * CELL_SIZE, self.y * CELL_SIZE))
 
         font = pygame.font.SysFont('arial', 20)
         text_surface = font.render(str(self.id), True, (0, 0, 0))
@@ -37,8 +40,8 @@ class Organism(ABC):
 
 
 class Animal(Organism):
-    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
-        super().__init__(x, y, age, force, initiative, color, species)
+    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None, image=None):
+        super().__init__(x, y, age, force, initiative, color, species, image)
         self.previous_position = (0, 0)
 
     def action(self, next_position, existing_organisms=None):
@@ -58,8 +61,8 @@ class Animal(Organism):
 
 
 class Plant(Organism):
-    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None):
-        super().__init__(x, y, age, force, initiative, color, species)
+    def __init__(self, x, y, age, force=None, initiative=None, color=None, species=None, image=None):
+        super().__init__(x, y, age, force, initiative, color, species, image)
 
     def action(self, next_position, existing_organisms=None):
         if random.random() < 0.1:

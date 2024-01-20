@@ -5,10 +5,11 @@ from organism import Animal
 class Fox(Animal):
     def __init__(self, x, y, age):
         self.color = (254, 127, 0)
+        self.image = 'fox.png'
         self.force = 3
         self.initiative = 7
         self.species = Species.Fox
-        super().__init__(x, y, age, self.force, self.initiative, self.color, self.species)
+        super().__init__(x, y, age, self.force, self.initiative, self.color, self.species, self.image)
 
     def __str__(self):
         return "Fox"
