@@ -48,7 +48,7 @@ class Animal(Organism):
         self.move(next_position)
 
     def move(self, next_position):
-        self.previous_position = (self.x, self.y)  # TODO: check if works
+        self.previous_position = (self.x, self.y)
 
         x, y = next_position
         self.x = x

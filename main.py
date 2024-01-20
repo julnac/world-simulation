@@ -16,7 +16,7 @@ def draw_start_menu():
     font = pygame.font.SysFont('arial', 40)
     small_font = pygame.font.SysFont('arial', 20)
     title = font.render('World Simulation', True, (255, 255, 255))
-    subtitle = small_font.render('Press ENTER to start', True, (150, 150, 150))
+    subtitle = small_font.render('Press SPACE to start', True, (150, 150, 150))
     screen.blit(title, ((GAME_WIDTH+200)/2 - title.get_width()/2, GAME_HEIGHT/2 - title.get_height()))
     screen.blit(subtitle, ((GAME_WIDTH+200)/2 - subtitle.get_width()/2, GAME_HEIGHT/2 + subtitle.get_height()/2 + 10 ))
     pygame.display.update()
