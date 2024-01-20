@@ -38,17 +38,17 @@ class CyberSheep(Animal):
 
     def action(self, next_position, existing_organisms=None):
         self.previous_position = (self.x, self.y)
-        farthest_distance = 0
-        farthest_organism = None
+        nearest_distance = 1000000
+        nearest_organism = None
         for o in existing_organisms:
             if o.species == Species.Hogweed:
                 distance = check_distance(self.x, self.y, o)
-                if distance > farthest_distance:
-                    farthest_distance = distance
-                    farthest_organism = o
+                if distance < nearest_distance:
+                    nearest_distance = distance
+                    nearest_organism = o
 
-        if farthest_organism is not None:
-            self.go_to(farthest_organism, farthest_distance)
+        if nearest_organism is not None:
+            self.go_to(nearest_organism, nearest_distance)
             return "none"
         else:
             super().move(next_position)

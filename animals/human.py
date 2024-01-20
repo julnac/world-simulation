@@ -16,8 +16,9 @@ class Human(Animal):
         return "HUMAN"
 
     def magic_elixir(self):
-        self.elixir_counter = 10
-        self.force += 10
+        if self.elixir_counter == 0:
+            self.elixir_counter = 10
+            self.force += 11
 
     def reduce_force(self):
         if self.elixir_counter > 0:
