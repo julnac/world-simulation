@@ -220,18 +220,49 @@ def fight(organism, other_organism):
     return "game"
 
 
+def draw_ranking(screen, round_counter, scroll_position):
+
+    # scroll_position = max(0, min(scroll_position, len(existing_organisms) - VISIBLE_RANKING_ENTRIES))
+
+    font = pygame.font.SysFont('arial', 15)
+    font_bold = pygame.font.SysFont('arial', 15, pygame.font.Font.bold)
+
+    pygame.draw.rect(screen, (225, 225, 225), pygame.Rect(GAME_WIDTH, 0, RANKING_AREA_WIDTH, GAME_HEIGHT))
+    turn_surface = font_bold.render(f"Turn {round_counter}", True, (71, 71, 71))
+    screen.blit(turn_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5))
+    header_surface = font.render("Ranking:", True, (71, 71, 71))
+    screen.blit(header_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 30))
+    animal_counter = 1
+    y_offset = 50
+
+    for i in range(scroll_position, min(scroll_position + VISIBLE_RANKING_ENTRIES, len(existing_organisms))):
+        organism = existing_organisms[i]
+        text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}", True,
+                                   (71, 71, 71))
+        screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
+        y_offset += 20
+        animal_counter += 1
+
+    # for organism in existing_organisms:
+    #     text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}", True, (71, 71, 71))
+    #     screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
+    #     y_offset += 20
+    #     animal_counter += 1
+
+
 class World:
     def __init__(self):
         Organism.id_counter = 1
         self.round_counter = 0
+        self.scroll_position = 0
         existing_organisms.clear()
         initial_organisms_count = 15
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
             position = generate_position("random", existing_organisms)
-            animal = create_organism(animal_type, position[0], position[1])
-            if animal is not None:
-                existing_organisms.append(animal)
+            organism = create_organism(animal_type, position[0], position[1])
+            if organism is not None:
+                existing_organisms.append(organism)
         self.human = get_human()
         existing_organisms.append(self.human)
         update_ranking()
@@ -268,30 +299,27 @@ class World:
     def draw_world(self, screen):
         self.round_counter += 1
 
-        for o in existing_organisms:
-            o.draw(screen)
-        self.human.draw(screen)
+        [o.draw(screen) for o in existing_organisms]
 
         for i in range(CELL_NUMBER):
             pygame.draw.line(screen, (71, 71, 71), (0, i*CELL_SIZE), (CELL_NUMBER*CELL_SIZE, i*CELL_SIZE))
         for i in range(CELL_NUMBER):
             pygame.draw.line(screen, (71, 71, 71), (i * CELL_SIZE, 0), (i * CELL_SIZE, CELL_NUMBER * CELL_SIZE))
 
-        font = pygame.font.SysFont('arial', 15)
-        font_bold = pygame.font.SysFont('arial', 15, pygame.font.Font.bold)
+        draw_ranking(screen, self.round_counter, self.scroll_position)
+        # font = pygame.font.SysFont('arial', 15)
+        # font_bold = pygame.font.SysFont('arial', 15, pygame.font.Font.bold)
+        #
+        # pygame.draw.rect(screen, (225, 225, 225), pygame.Rect(GAME_WIDTH, 0, 200, GAME_HEIGHT))
+        # turn_surface = font_bold.render(f"Turn {self.round_counter}", True, (71, 71, 71))
+        # screen.blit(turn_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5))
+        # header_surface = font.render("Ranking:", True, (71, 71, 71))
+        # screen.blit(header_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 30))
+        # animal_counter = 1
+        # y_offset = 50
 
-        pygame.draw.rect(screen, (225, 225, 225), pygame.Rect(GAME_WIDTH, 0, 200, GAME_HEIGHT))
-        turn_surface = font_bold.render(f"Turn {self.round_counter}", True, (71, 71, 71))
-        screen.blit(turn_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5))
-        header_surface = font.render("Ranking:", True, (71, 71, 71))
-        screen.blit(header_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 30))
-        animal_counter = 1
-        y_offset = 50
-
-        for organism in existing_organisms:
-            text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}", True, (71, 71, 71))
-            screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
-            y_offset += 20
-            animal_counter += 1
-
-
+        # for organism in existing_organisms:
+        #     text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}", True, (71, 71, 71))
+        #     screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
+        #     y_offset += 20
+        #     animal_counter += 1

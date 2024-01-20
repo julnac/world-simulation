@@ -16,7 +16,7 @@ def draw_start_menu():
     font = pygame.font.SysFont('arial', 40)
     small_font = pygame.font.SysFont('arial', 20)
     title = font.render('World Simulation', True, (255, 255, 255))
-    subtitle = small_font.render('Press ENTER to start', True, (150, 150, 150))
+    subtitle = small_font.render('Press SPACE to start', True, (150, 150, 150))
     screen.blit(title, ((GAME_WIDTH+200)/2 - title.get_width()/2, GAME_HEIGHT/2 - title.get_height()))
     screen.blit(subtitle, ((GAME_WIDTH+200)/2 - subtitle.get_width()/2, GAME_HEIGHT/2 + subtitle.get_height()/2 + 10 ))
     pygame.display.update()
@@ -62,6 +62,14 @@ while running:
 
     # CHECK FOR EVERY KIND OF EVENT------------
     for event in pygame.event.get():
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        hovering_over_ranking = (CELL_NUMBER * CELL_SIZE) + 5 <= mouse_x <= (
+                    CELL_NUMBER * CELL_SIZE) + 5 + RANKING_AREA_WIDTH
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 4:
+                world.scroll_position -= SCROLL_SPEED
+            elif event.button == 5:
+                world.scroll_position += SCROLL_SPEED
         keys = pygame.key.get_pressed()
         if event.type == pygame.QUIT:
             running = False
