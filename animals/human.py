@@ -11,8 +11,7 @@ class Human(Animal):
         self.force = 5
         self.initiative = 4
         self.elixir_counter = 0
-        self.species = Species.Human
-        super().__init__(x, y, age, self.force, self.initiative, self.color, self.species, self.image)
+        super().__init__(x, y, age, self.force, self.initiative, color=self.color, image=self.image)
 
     def __str__(self):
         return "HUMAN"

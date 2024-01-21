@@ -32,11 +32,12 @@ class Organism(ABC):
         image = pygame.image.load(f'assets/{self.image}')
         screen.blit(image, (self.x * CELL_SIZE, self.y * CELL_SIZE))
 
-        font = pygame.font.SysFont('arial', 20)
-        text_surface = font.render(str(self.id), True, (0, 0, 0))
-        text_rect = text_surface.get_rect(center=(self.x * CELL_SIZE + CELL_SIZE // 2,
-                                                  self.y * CELL_SIZE + CELL_SIZE // 2))
-        screen.blit(text_surface, text_rect)
+        if self.initiative != 0:
+            font = pygame.font.SysFont('arial', 15)
+            text_surface = font.render(str(self.id), True, (30, 30, 30))
+            text_rect = text_surface.get_rect(center=(self.x * CELL_SIZE + CELL_SIZE // 2 + 8,
+                                                      self.y * CELL_SIZE + CELL_SIZE // 2 - 8))
+            screen.blit(text_surface, text_rect)
 
 
 class Animal(Organism):

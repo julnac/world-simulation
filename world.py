@@ -17,10 +17,13 @@ from plants.hogweed import Hogweed
 from plants.milkweed import Milkweed
 from organism import Organism
 import pygame
+from totem import Totem
 
 from enums.species import Species
 
 existing_organisms = []
+existing_totems = []
+score = 0
 
 
 def choose_animal_type_randomly(number):
@@ -159,6 +162,16 @@ def check_collision(animal1, animal2, round_counter):
     return "none"
 
 
+def check_collision_with_totem(human):
+    global score
+    for totem in existing_totems:
+        if human.x == totem.x and human.y == totem.y and totem.visibility:
+            totem.visibility = False
+            score += 1
+    if score == 3:
+        return "victory"
+
+
 def update_ranking():
     existing_organisms.sort(key=lambda x: (-x.initiative, -x.age))
     # for organism in existing_animals:
@@ -191,10 +204,11 @@ def fight(organism, other_organism):
 
     if organism.force < other_organism.force:
         print(f"{other_organism}({other_organism.id}) kills {organism}({organism.id})")
-        # TODO - napraw ten kolor
+        # TODO - do not recognise human by color xd
         if organism.color == (255, 0, 128):
             print("GAME OVER")
             return "game_over"
+        # TODO - ValueError: list.remove(x): x not in list
         existing_organisms.remove(organism)
     else:
         print(f"{organism}({organism.id}) kills {other_organism}({other_organism.id})")
@@ -209,26 +223,38 @@ def fight(organism, other_organism):
     return "game"
 
 
+def create_totems(number):
+    for _ in range(0, number):
+        position = generate_position("random", existing_organisms)
+        totem = Totem(position[0], position[1], True)
+        existing_totems.append(totem)
+
+
 class World:
     def __init__(self):
+        global score
         Organism.id_counter = 1
         self.round_counter = 0
+        score = 0
         existing_organisms.clear()
+        existing_totems.clear()
         initial_organisms_count = 30
+        self.human = get_human()
+        existing_organisms.append(self.human)
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
             position = generate_position("random", existing_organisms)
             org = create_organism(animal_type, position[0], position[1])
             if org is not None:
                 existing_organisms.append(org)
-        self.human = get_human()
-        existing_organisms.append(self.human)
+        create_totems(3)
         update_ranking()
 
     def make_round(self) -> str:
         self.round_counter += 1
         print(f'#---Round {self.round_counter}---#')
         state = "game"
+        sub_state = " "
         for organism in existing_organisms:
             move(organism, existing_organisms)
             for other_organism in existing_organisms:
@@ -250,7 +276,10 @@ class World:
                             print(f'{other_organism}({other_organism.id}) escapes from {organism}({organism.id})')
                         case _:
                             print("Error")
-
+            if organism.color == (255, 0, 128):
+                sub_state = check_collision_with_totem(organism)
+            if sub_state == "victory":
+                return "victory"
             if state == "game_over":
                 return "game_over"
         return state
@@ -259,27 +288,38 @@ class World:
         for o in existing_organisms:
             o.draw(screen)
         # self.human.draw(screen)
+        for totem in existing_totems:
+            if totem.visibility:
+                image = pygame.image.load(f'assets/totem.png')
+                screen.blit(image, (totem.x * CELL_SIZE, totem.y * CELL_SIZE))
+                # pygame.draw.rect(screen, (255, 255, 0), (totem.x * CELL_SIZE, totem.y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
         for i in range(CELL_NUMBER):
-            pygame.draw.line(screen, (71, 71, 71), (0, i*CELL_SIZE), (CELL_NUMBER*CELL_SIZE, i*CELL_SIZE))
+            pygame.draw.line(screen, (89, 81, 68), (0, i*CELL_SIZE), (CELL_NUMBER*CELL_SIZE, i*CELL_SIZE))
         for i in range(CELL_NUMBER):
-            pygame.draw.line(screen, (71, 71, 71), (i * CELL_SIZE, 0), (i * CELL_SIZE, CELL_NUMBER * CELL_SIZE))
+            pygame.draw.line(screen, (89, 81, 68), (i * CELL_SIZE, 0), (i * CELL_SIZE, CELL_NUMBER * CELL_SIZE))
 
         font = pygame.font.SysFont('arial', 15)
         font_bold = pygame.font.SysFont('arial', 15, pygame.font.Font.bold)
 
-        pygame.draw.rect(screen, (225, 225, 225), pygame.Rect(GAME_WIDTH, 0, 200, GAME_HEIGHT))
-        turn_surface = font_bold.render(f"Turn {self.round_counter}", True, (71, 71, 71))
+        pygame.draw.rect(screen, (218, 192, 154), pygame.Rect(GAME_WIDTH, 0, RANKING_WIDTH, GAME_HEIGHT))
+
+        turn_surface = font_bold.render(f"Turn {self.round_counter}", True, (89, 81, 68))
         screen.blit(turn_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5))
-        header_surface = font.render("Ranking:", True, (71, 71, 71))
-        screen.blit(header_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 30))
+
+        score_surface = font_bold.render(f"Score {score}", True, (89, 81, 68))
+        screen.blit(score_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 25))
+
+        header_surface = font_bold.render("Ranking:", True, (89, 81, 68))
+        screen.blit(header_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 45))
         animal_counter = 1
-        y_offset = 50
+        y_offset = 65
 
         for organism in existing_organisms:
-            text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}, force:{organism.force}", True, (71, 71, 71))
-            screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
-            y_offset += 20
-            animal_counter += 1
+            if organism.initiative != 0:
+                text_surface = font.render(f"{animal_counter}. [ {organism.id} ] {organism}, age: {organism.age}, force:{organism.force}", True, (89, 81, 68))
+                screen.blit(text_surface, ((CELL_NUMBER * CELL_SIZE) + 5, 5 + y_offset))
+                y_offset += 20
+                animal_counter += 1
 
 
