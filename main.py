@@ -17,8 +17,15 @@ def draw_start_menu():
     small_font = pygame.font.SysFont('arial', 20)
     title = font.render('World Simulation', True, (255, 255, 255))
     subtitle = small_font.render('Press SPACE to start', True, (150, 150, 150))
+    instructions = small_font.render('Instructions:', True, (150, 150, 150))
+    e_key = small_font.render('Press "E" to use magic elixir (adds 10 to your force)', True, (150, 150, 150))
+
     screen.blit(title, ((GAME_WIDTH+200)/2 - title.get_width()/2, GAME_HEIGHT/2 - title.get_height()))
-    screen.blit(subtitle, ((GAME_WIDTH+200)/2 - subtitle.get_width()/2, GAME_HEIGHT/2 + subtitle.get_height()/2 + 10 ))
+    screen.blit(subtitle, ((GAME_WIDTH+200)/2 - subtitle.get_width()/2, GAME_HEIGHT/2 + subtitle.get_height()/2 + 10))
+    screen.blit(instructions,
+                ((GAME_WIDTH + 200) / 2 - instructions.get_width() / 2, GAME_HEIGHT / 2 + subtitle.get_height() + 40))
+    screen.blit(e_key, ((GAME_WIDTH + 200) / 2 - e_key.get_width() / 2, GAME_HEIGHT / 2 + subtitle.get_height() + 80))
+
     pygame.display.update()
 
 
@@ -58,6 +65,9 @@ def reset():
     # world.round_counter = 1
 
 
+special_key_pressed = False
+
+
 while running:
 
     # CHECK FOR EVERY KIND OF EVENT------------
@@ -85,8 +95,15 @@ while running:
                     quit()
 
         if game_state == "game":
-            if event.type == pygame.KEYDOWN:
-                screen.fill((0, 0, 0))
+            if keys[pygame.K_e] and not special_key_pressed:
+                world.human.magic_elixir()
+                special_key_pressed = True
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_e:
+                    special_key_pressed = False
+
+            if keys[pygame.K_UP] or keys[pygame.K_DOWN] or keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:
 
                 if keys[pygame.K_UP]:
                     if world.human.y > 0:
@@ -100,10 +117,11 @@ while running:
                 if keys[pygame.K_LEFT]:
                     if world.human.x > 0:
                         world.human.x -= 1
-                if keys[pygame.K_e]:
-                    world.human.magic_elixir()
+
                 game_state = world.make_round()
-                world.draw_world(screen)
+
+            screen.fill((0, 0, 0))
+            world.draw_world(screen)
 
     pygame.display.flip()
 

@@ -1,6 +1,7 @@
 from organism import Animal
 from Direction import Direction
 from constants import *
+from enums.species import Species
 
 
 class Human(Animal):
@@ -10,7 +11,8 @@ class Human(Animal):
         self.force = 5
         self.initiative = 4
         self.elixir_counter = 0
-        super().__init__(x, y, age, self.force, self.initiative, color=self.color, image=self.image)
+        self.species = Species.Human
+        super().__init__(x, y, age, self.force, self.initiative, self.color, self.species, self.image)
 
     def __str__(self):
         return "HUMAN"
@@ -18,7 +20,7 @@ class Human(Animal):
     def magic_elixir(self):
         if self.elixir_counter == 0:
             self.elixir_counter = 10
-            self.force += 11
+            self.force += 10
 
     def reduce_force(self):
         if self.elixir_counter > 0:

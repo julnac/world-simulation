@@ -20,8 +20,6 @@ import pygame
 
 from enums.species import Species
 
-# animal_type_list = ["Wolf", "Sheep", "Fox", "Turtle", "Antelope", "CyberSheep"]
-# plant_type_list = ["Grass", "Milkweed", "Guarana", "WolfBerries", "Hogweed"]
 existing_organisms = []
 
 
@@ -86,16 +84,6 @@ def find_empty_adjacent_position(board, reference_organism):
                 return None
 
 
-# def check_if_empty_adjacent_to_grow(board, reference_organism):
-#     possible_positions = []
-#     directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-#     for dx, dy in directions:
-#         x, y = (reference_organism.x + dx), (reference_organism.y + dy)
-#         if x >= 0 and x < CELL_NUMBER and y >= 0 and y < CELL_NUMBER and not board[x][y]:
-#             possible_positions.append((x, y))
-#     return possible_positions
-
-
 def generate_position(location_search_policy, existing_organisms, reference_organism=None):
     if board_is_full(existing_organisms):
         raise Exception("Board is full. Cannot find position for another organism.")
@@ -148,7 +136,6 @@ def get_human():
 
 def check_collision(animal1, animal2, round_counter):
     if animal2 != animal1 and animal1.x == animal2.x and animal1.y == animal2.y:
-        # TODO - nie rozpoznawaj gatunku po kolorze
         if animal1.species == animal2.species:
             if animal1.age > 5 and animal2.age > 5:
                 collision_type = "procreation"
@@ -189,7 +176,6 @@ def move(organism, existing_organisms):
             new_plant = create_organism(organism.species, grow_position[0], grow_position[1])
             existing_organisms.append(new_plant)
             print(f'{organism}({organism.id}) grows')
-            # update_ranking()
 
 
 def procreate(organism):
@@ -232,14 +218,15 @@ class World:
         chosen_animal_types = choose_animal_type_randomly(initial_organisms_count)
         for animal_type in chosen_animal_types:
             position = generate_position("random", existing_organisms)
-            animal = create_organism(animal_type, position[0], position[1])
-            if animal is not None:
-                existing_organisms.append(animal)
+            org = create_organism(animal_type, position[0], position[1])
+            if org is not None:
+                existing_organisms.append(org)
         self.human = get_human()
         existing_organisms.append(self.human)
         update_ranking()
 
     def make_round(self) -> str:
+        self.round_counter += 1
         print(f'#---Round {self.round_counter}---#')
         state = "game"
         for organism in existing_organisms:
@@ -269,11 +256,9 @@ class World:
         return state
 
     def draw_world(self, screen):
-        self.round_counter += 1
-
         for o in existing_organisms:
             o.draw(screen)
-        self.human.draw(screen)
+        # self.human.draw(screen)
 
         for i in range(CELL_NUMBER):
             pygame.draw.line(screen, (71, 71, 71), (0, i*CELL_SIZE), (CELL_NUMBER*CELL_SIZE, i*CELL_SIZE))

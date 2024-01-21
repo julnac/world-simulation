@@ -2,16 +2,15 @@ from enum import Enum
 
 
 class Species(Enum):
-    Wolf = 'Wolf',
-    Sheep = 'Sheep',
-    Fox = 'Fox',
-    Turtle = 'Turtle',
-    Antelope = 'Antelope',
-    CyberSheep = 'CyberSheep'
+    Wolf = 1,
+    Sheep = 2,
+    Fox = 3,
+    Turtle = 4,
+    Antelope = 5,
+    CyberSheep = 6,
 
-    Grass = 'Grass'
-    Milkweed = 'Milkweed'
-    Guarana = 'Guarana'
-    WolfBerries = 'WolfBerries'
-    Hogweed = 'Hogweed'
-
+    Grass = 7,
+    Milkweed = 8,
+    Guarana = 9,
+    WolfBerries = 10,
+    Hogweed = 11,
